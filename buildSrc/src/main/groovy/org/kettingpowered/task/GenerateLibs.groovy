@@ -17,7 +17,7 @@ abstract class GenerateLibs extends DefaultTask {
             delegate.eachByte(4096) { byte[] bytes, int size ->
                 md.update(bytes, 0, size)
             }
-            return md.digest().collect(item -> Integer.toHexString(item.intValue())).join('')
+            return md.digest().encodeHex().toString()
         }
         File.metaClass.getSha256 = { !delegate.exists() ? null : delegate.sha256() }
         File.metaClass.sha512 = { ->
@@ -25,7 +25,7 @@ abstract class GenerateLibs extends DefaultTask {
             delegate.eachByte(4096) { byte[] bytes, int size ->
                 md.update(bytes, 0, size)
             }
-            return md.digest().collect(item -> Integer.toHexString(item.intValue())).join('')
+            return md.digest().encodeHex().toString()
         }
         File.metaClass.getSha512 = { !delegate.exists() ? null : delegate.sha512() }
     }

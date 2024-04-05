@@ -89,8 +89,8 @@ dependencies {
     
     // Ketting start
     installer("org.kettingpowered:kettingcore:1.3")
-    installer("org.kettingpowered:kettingcommon:2.3.2")
-    kettinglauncher("org.kettingpowered:kettinglauncher:1.3.3")
+    installer("org.kettingpowered:kettingcommon:69.420.0")
+    kettinglauncher("org.kettingpowered:kettinglauncher:69.420.0")
     installer("org.kettingpowered:terminal-colors:1.0.2")
     installer("org.yaml:snakeyaml:2.2")
     installer("org.apache.logging.log4j:log4j-iostreams:2.19.0")
@@ -148,9 +148,10 @@ dependencies {
 }
 
 ext {
-    MC_VERSION = "1.20.4"
-    FORGE_VERSION = "20.4.214"
-    KETTING_VERSION = "0.0.0"
+    MINECRAFT_VERION = project.minecraft_version
+    FORGE_VERSION = project.neoforge_version
+    KETTING_VERSION = project.ketting_version
+    MCP_VERSION = project.neoform_version
 }
 
 //Ketting start
@@ -166,9 +167,10 @@ tasks.register('kettingJar', Jar) {
         attributes 'Launcher-Agent-Class': 'org.kettingpowered.launcher.Main'
         attributes 'Automatic-Module-Name': 'org.kettingpowered.kettinglauncher'
         attributes 'Bundled': 'true'
-        attributes 'MinecraftVersion': minecraft_version
+        attributes 'MinecraftVersion': MINECRAFT_VERION
         attributes 'ForgeVersion': FORGE_VERSION
         attributes 'KettingVersion': KETTING_VERSION
+        attributes 'Type': 'NeoForge'
         attributes([
                 "Specification-Title": "Kettingpowered",
                 "Specification-Vendor": "Kettingpowered",
@@ -189,8 +191,8 @@ tasks.register('kettingJar', Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    from(createLegacyInstallerJson.output) {
-        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
+    from(createLauncherJson.output) {
+        rename { 'data/neoforge-' + MINECRAFT_VERION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
     }
 
     //BUNDLED_PROJECTS.each { dep ->
@@ -204,7 +206,23 @@ tasks.register('kettingJar', Jar) {
     }
 
     from(universalJar) {
-        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-universal.jar' }
+        rename { 'data/neoforge-' + MINECRAFT_VERION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-universal.jar' }
+        ((Jar)universalJar).manifest( manifest -> {
+            manifest.attributes([
+                    'Specification-Title':      'Kettingpowered',
+                    'Specification-Vendor':     'Kettingpowered',
+                    'Implementation-Title':     'Ketting',
+                    'Implementation-Version':   "${MINECRAFT_VERION}-${FORGE_VERSION}-${KETTING_VERSION}-${MCP_VERSION}",
+                    'Implementation-Vendor':    'Kettingpowered'
+            ] as LinkedHashMap, 'org/kettingpowered/ketting/')
+            manifest.attributes([
+                    'Specification-Title':      'Kettingpowered',
+                    'Specification-Vendor':     'Kettingpowered',
+                    'Implementation-Title':     'Ketting',
+                    'Implementation-Version':   "${MINECRAFT_VERION}-${FORGE_VERSION}-${KETTING_VERSION}-${MCP_VERSION}",
+                    'Implementation-Vendor':    'Kettingpowered'
+            ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
+        })
     }
 }
 //Ketting end
