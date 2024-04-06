@@ -191,7 +191,7 @@ tasks.register('kettingJar', Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    from(createLauncherJson.output) {
+    from(createLegacyInstallerJson.output) {
         rename { 'data/neoforge-' + MINECRAFT_VERION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
     }
 
