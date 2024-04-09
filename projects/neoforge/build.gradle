@@ -153,6 +153,7 @@ ext {
     FORGE_VERSION = project.neoforge_version
     KETTING_VERSION = project.ketting_version
     MCP_VERSION = project.neoform_version
+    FML_VERSION = project.fancy_mod_loader_version
 }
 
 //Ketting start
@@ -171,6 +172,7 @@ tasks.register('kettingJar', Jar) {
         attributes 'MinecraftVersion': MINECRAFT_VERION
         attributes 'ForgeVersion': FORGE_VERSION
         attributes 'KettingVersion': KETTING_VERSION
+        attributes 'fmlVersion': FML_VERSION
         attributes 'Type': 'NeoForge'
         attributes([
                 "Specification-Title": "Kettingpowered",
