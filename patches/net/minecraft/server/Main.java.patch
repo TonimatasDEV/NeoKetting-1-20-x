@@ -62,7 +62,7 @@
  
              Path path = optionset.valueOf(optionspec13);
              if (path != null) {
-@@ -99,27 +_,48 @@
+@@ -99,35 +_,57 @@
                  JvmProfiler.INSTANCE.start(Environment.SERVER);
              }
  
@@ -118,9 +118,11 @@
 +                return;
 +            }
              LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
-             LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
+-            LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
++            LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.OVERWORLD); // Ketting
              Dynamic<?> dynamic;
-@@ -128,6 +_,7 @@
+             if (levelstoragesource$levelstorageaccess.hasWorldData()) {
+                 LevelSummary levelsummary;
                  try {
                      dynamic = levelstoragesource$levelstorageaccess.getDataTag();
                      levelsummary = levelstoragesource$levelstorageaccess.getSummary(dynamic);

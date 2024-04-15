@@ -37,8 +37,9 @@
              }
          }
  
-         this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, p_44033_ -> ((Builder)p_44033_.getValue()).build()));
+-        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, p_44033_ -> ((Builder)p_44033_.getValue()).build()));
 -        this.byName = builder.build();
++        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Entry::getValue));
 +        this.byName = Maps.newHashMap(builder.build()); // CraftBukkit
          LOGGER.info("Loaded {} recipes", map.size());
      }
