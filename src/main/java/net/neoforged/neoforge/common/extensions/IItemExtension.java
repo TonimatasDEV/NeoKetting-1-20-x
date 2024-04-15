@@ -591,14 +591,15 @@ public interface IItemExtension {
     }
 
     /**
-     * @return the fuel burn time for this itemStack in a furnace. Return 0 to make
+     * @return the fuel burn time for this item stack in a furnace. Return 0 to make
      *         it not act as a fuel. Return -1 to let the default vanilla logic
      *         decide.
      * @apiNote This method takes precedence over the {@link net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps#FURNACE_FUELS data map}.
-     *          However, you should use the datamap unless necessary (i.e. NBT-based burn times) so that users can configure burn times.
+     *          However, you should use the data map unless necessary (i.e. NBT-based burn times) so that users can configure burn times.
      */
     @ApiStatus.OverrideOnly
     default int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
+        // TODO 1.20.5: Change default logic from -1 to calling the datamap (moving the logic from the itemstack method).
         return -1;
     }
 

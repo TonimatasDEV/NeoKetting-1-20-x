@@ -40,10 +40,7 @@ import net.neoforged.testframework.gametest.EmptyTemplate;
 import net.neoforged.testframework.gametest.ExtendedGameTestHelper;
 import net.neoforged.testframework.gametest.GameTestData;
 import net.neoforged.testframework.gametest.StructureTemplateBuilder;
-import net.neoforged.testframework.impl.EventListenerGroupImpl;
-import net.neoforged.testframework.impl.MutableTestFramework;
-import net.neoforged.testframework.impl.ReflectionUtils;
-import net.neoforged.testframework.impl.TestFrameworkImpl;
+import net.neoforged.testframework.impl.*;
 import net.neoforged.testframework.impl.reg.RegistrationHelperImpl;
 import net.neoforged.testframework.registration.RegistrationHelper;
 import org.jetbrains.annotations.Nullable;
@@ -254,11 +251,20 @@ public abstract class AbstractTest implements Test {
             disabledListeners.forEach(Runnable::run);
         }
 
-        private final List<Consumer<ExtendedGameTestHelper>> onGameTest = new ArrayList<>();
+        private final List<Consumer<GameTestHelper>> onGameTest = new ArrayList<>();
 
         @Override
         public void onGameTest(Consumer<ExtendedGameTestHelper> consumer) {
-            this.onGameTest.add(consumer);
+            onGameTest(ExtendedGameTestHelper::new, consumer);
+        }
+
+        @Override
+        public <T extends GameTestHelper> void onGameTest(Class<T> helperType, final Consumer<T> consumer) {
+            onGameTest(GameTestHelperFactory.forType(helperType), consumer);
+        }
+
+        private <T extends GameTestHelper> void onGameTest(GameTestHelperFactory<T> factory, final Consumer<T> consumer) {
+            this.onGameTest.add(helper -> consumer.accept(factory.apply(helper.testInfo)));
         }
 
         @Override
@@ -318,8 +324,7 @@ public abstract class AbstractTest implements Test {
                     isDuringGameTest = false;
                 }
             });
-            final var actualHelper = new ExtendedGameTestHelper(helper.testInfo);
-            this.onGameTest.forEach(test -> test.accept(actualHelper));
+            this.onGameTest.forEach(test -> test.accept(helper));
         }
 
         @Override

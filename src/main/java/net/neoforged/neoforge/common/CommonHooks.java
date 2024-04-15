@@ -134,6 +134,7 @@ import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import net.neoforged.neoforge.common.extensions.IEntityExtension;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+import net.neoforged.neoforge.common.extensions.IItemStackExtension;
 import net.neoforged.neoforge.common.loot.LootModifierManager;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
@@ -922,19 +923,13 @@ public class CommonHooks {
     }
 
     /**
-     * Gets the burn time of this itemstack.
+     * Gets the burn time of this item stack.
+     *
+     * @deprecated Use {@link IItemStackExtension#getBurnTime(RecipeType)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.20.5")
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
-        if (stack.isEmpty()) {
-            return 0;
-        } else {
-            int ret = stack.getBurnTime(recipeType);
-            if (ret == -1) {
-                var fuel = stack.getItemHolder().getData(NeoForgeDataMaps.FURNACE_FUELS);
-                ret = fuel == null ? 0 : fuel.burnTime();
-            }
-            return EventHooks.getItemBurnTime(stack, ret, recipeType);
-        }
+        return stack.getBurnTime(recipeType);
     }
 
     /**
