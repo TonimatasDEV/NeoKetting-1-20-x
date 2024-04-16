@@ -1,5 +1,7 @@
 ![NeoForged Logo](./assets/neoforged_logo.png)
 
+NeoForge commit: 0094d9a3bcb3ba4d6fce1be26e80df8725344df0
+
 NeoForge
 =============
 [![Discord](https://img.shields.io/discord/313125603924639766.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)][Discord] 
