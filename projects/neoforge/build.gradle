@@ -198,7 +198,7 @@ tasks.register('kettingJar', Jar) {
         exclude "META-INF/*.RSA"
     }
     from(createLegacyInstallerJson.output) {
-        rename { 'data/neoforge-' + FORGE_VERSION + '-installscript.json' }
+        rename { "data/neoforge-${MINECRAFT_VERION}-${FORGE_VERSION}-${KETTING_VERSION}-installscript.json" }
     }
 
     from(generateServerBinaryPatches.output) {
@@ -206,7 +206,7 @@ tasks.register('kettingJar', Jar) {
     }
 
     from(universalJar) {
-        rename { 'data/neoforge-' + FORGE_VERSION + '-universal.jar' }
+        rename { "data/neoforge-${MINECRAFT_VERION}-${FORGE_VERSION}-${KETTING_VERSION}-universal.jar" }
         ((Jar)universalJar).manifest( manifest -> {
             manifest.attributes([
                     'Specification-Title':      'Kettingpowered',
