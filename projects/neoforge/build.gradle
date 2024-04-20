@@ -1,3 +1,6 @@
+import org.kettingpowered.task.GenerateLibs
+import org.kettingpowered.task.Util
+
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -29,11 +32,6 @@ sourceSets {
         resources {
             srcDirs rootProject.file('src/main/resources'), rootProject.file('src/generated/resources')
         }
-    }
-}
-configurations{
-    kettinglauncher{
-        transitive = false
     }
 }
 
@@ -95,8 +93,6 @@ dependencies {
     
     // Ketting start
     installer("org.kettingpowered:kettingcore:1.3")
-    installer("org.kettingpowered:kettingcommon:69.420.0")
-    kettinglauncher("org.kettingpowered:kettinglauncher:69.420.0")
     installer("org.kettingpowered:terminal-colors:1.0.2")
     installer("org.yaml:snakeyaml:2.2")
     installer("org.apache.logging.log4j:log4j-iostreams:2.19.0")
@@ -144,6 +140,7 @@ dependencies {
     installer("org.apache.logging.log4j:log4j-core:2.19.0")
     installer("org.apache.logging.log4j:log4j-slf4j2-impl:2.19.0")
     installer("org.joml:joml:1.10.5")
+    compileOnly(project(":common"))
     // Ketting end
     
     compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
@@ -161,8 +158,10 @@ ext {
 }
 
 //Ketting start
-org.kettingpowered.task.GenerateLibs.init();
-tasks.register('generateKettingLibraries', org.kettingpowered.task.GenerateLibs) {}
+tasks.register('generateKettingLibraries', GenerateLibs) {
+    configuration = "installer"
+    output = getProject().getLayout().getBuildDirectory().file("ketting_libraries.txt")
+}
 
 tasks.register('kettingJar', Jar) {
     archiveExtension = 'jar'
@@ -187,16 +186,22 @@ tasks.register('kettingJar', Jar) {
     }
     mustRunAfter ':setup'
 
-    from(generateKettingLibraries) {
-        rename {'data/ketting_libraries.txt'}
-    }
-    from {
-        configurations.kettinglauncher.collect { it.isDirectory() ? it : zipTree(it) }
-    } {
+    def launcherSources = project(":launcher").tasks.jar
+    dependsOn(launcherSources)
+    from(launcherSources.archiveFile.map { zipTree(it) }) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
+
+    from(generateKettingLibraries) {
+        rename {'data/ketting_libraries.txt'}
+    }
+
+    from(project(":common").tasks.jar) {
+        rename {'data/common-bundled.jar'}
+    }
+    
     from(createLegacyInstallerJson.output) {
         rename { "data/neoforge-${MINECRAFT_VERION}-${FORGE_VERSION}-${KETTING_VERSION}-installscript.json" }
     }

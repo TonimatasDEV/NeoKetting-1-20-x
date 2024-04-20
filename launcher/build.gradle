@@ -1,0 +1,88 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+    id 'net.minecraftforge.gradleutils' version '2.3.5'
+}
+
+import net.minecraftforge.gradleutils.PomUtils
+import org.kettingpowered.task.GenerateLibs
+import org.kettingpowered.task.Util
+
+import java.util.stream.Collectors
+
+Util.init()
+
+group = 'org.kettingpowered'
+version = System.getenv("VERSION") ?: 'dev-env'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://nexus.c0d3m4513r.com/repository/Ketting/' }
+    maven { url = 'https://nexus.c0d3m4513r.com/repository/Forge/' }
+    maven { url = 'https://maven.neoforged.net/'}
+    mavenLocal()
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    withSourcesJar()
+}
+
+configurations {
+    implementation {
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    compileOnly(project(":common"))
+    implementation 'com.google.code.gson:gson:2.10.1' //Used in Patcher
+    implementation 'me.tongfei:progressbar:0.10.0' //Used to display progress
+    implementation 'org.kettingpowered:terminal-colors:1.0.2' //Used for progress bar, and terminal colors
+    implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.19.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    implementation 'org.spongepowered:mixin:0.8.5'
+    
+    //Used in processors
+    implementation 'net.neoforged.installertools:binarypatcher:2.1.4:fatjar'
+    implementation 'net.neoforged.installertools:installertools:2.1.4'
+    implementation 'net.neoforged.installertools:jarsplitter:2.1.4'
+    implementation 'net.neoforged:AutoRenamingTool:2.0.3'
+    implementation 'org.jetbrains:annotations:24.0.0'
+}
+
+ext{
+    mainClass = 'org.kettingpowered.launcher.Main'
+}
+
+tasks.register('generateKettingLauncherLibraries', GenerateLibs) {
+    configuration = 'implementation'
+    output = getProject().getLayout().getBuildDirectory().file("launcher_libraries.txt")
+}
+
+jar{
+    dependsOn generateKettingLauncherLibraries
+    mustRunAfter generateKettingLauncherLibraries
+
+    from(generateKettingLauncherLibraries.output) {
+        rename {
+            "data/launcher_libraries.txt"
+        }
+    }
+    manifest{
+        attributes 'Main-Class': mainClass
+        attributes 'Launcher-Agent-Class': mainClass
+        attributes 'Automatic-Module-Name': 'org.kettingpowered.kettinglauncher'
+        attributes([
+                "Specification-Title": "Kettingpowered",
+                "Specification-Vendor": "Kettingpowered",
+                "Implementation-Title": "Ketting",
+                "Implementation-Version": version,
+                "Implementation-Vendor": "Kettingpowered",
+        ], "org/kettingpowered/launcher/")
+    }
+}

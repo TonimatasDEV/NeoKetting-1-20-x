@@ -34,6 +34,10 @@ public class RegisterCommandsEvent extends Event {
      * {@return the command dispatcher for registering commands to be executed on the client}
      */
     public CommandDispatcher<CommandSourceStack> getDispatcher() {
+        //Ketting start
+        if (org.kettingpowered.ketting.command.RoutableCommandDispatcher.needsRedirect())
+            return org.kettingpowered.ketting.command.RoutableCommandDispatcher.of(dispatcher);
+        //Ketting end
         return dispatcher;
     }
 

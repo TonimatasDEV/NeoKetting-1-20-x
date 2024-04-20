@@ -1,3 +1,5 @@
+import org.kettingpowered.task.Util
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -8,6 +10,8 @@ plugins {
 }
 
 apply plugin: 'net.neoforged.gradleutils'
+
+Util.init() // Ketting
 
 gradleutils.version {
     minecraftVersion project.minecraft_version
